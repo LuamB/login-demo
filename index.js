@@ -6,6 +6,9 @@ import express, { response } from "express";
 // Reads PORT value from environment variable `PORT`, default value is 3000.
 const PORT = process.env.PORT || 3000;
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.listen(PORT, () => console.log(`Server listening on post ${PORT}`));
 
 // 1. GET / using express.static() middleware,
@@ -15,7 +18,6 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // 1. GET / with explicit route handler
 app.get("/", (req, res) => {
-  console.log("serving index.html...");
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
@@ -37,6 +39,28 @@ app.get("/echo/:message", (req, res) => {
 
 // 3. GET /login
 app.get("/login", (req, res) => {
-  console.log("serving login.html...");
   res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+
+// 4. POST /login
+app.post("/login", (req, res) => {
+  // const { email, password } = req.body;
+  const email = req.body["email"];
+  const password = req.body["password"];
+
+  console.log("Extracted email and password:", email, password);
+
+  // Validation: missing or empty fields?
+  if (!email && !password) {
+    return res.json({
+      success: false,
+      message: "Please provide both email and password",
+    });
+  }
+  // Simulate authentication
+  if (email !== "user@email.com" && password !== "very-secret") {
+    return res.json({ succes: false, message: "Invalid email or password" });
+  } else {
+    return res.json({ succes: true, message: "Congrats, you're in!" });
+  }
 });
