@@ -46,6 +46,7 @@ app.get("/echo/:message", (req, res) => {
 
 // 3. GET /login
 app.get("/login", (req, res) => {
+  console.log("serving login.html...");
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
 
