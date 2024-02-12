@@ -2,19 +2,26 @@ import { URL } from "url";
 import path, { dirname } from "path";
 import express, { response } from "express";
 
-// Initialize server & listen
-// Reads PORT value from environment variable `PORT`, default value is 3000.
+// Defines port on which my server listens for requests
+// from environment variable `PORT`; defaults to 3000
 const PORT = process.env.PORT || 3000;
+
+// Creates instance of app to define routes, middleware etc.
 const app = express();
+
+// Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Start server
 app.listen(PORT, () => console.log(`Server listening on post ${PORT}`));
 
-// 1. GET / using express.static() middleware,
-// serving static files (like HTML, CSS, or JS) from specified dir (here, "public")
+// Get absolute path of current file
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
-// app.use(express.static(path.join(__dirname, "public")));
+
+// 1. GET / using express.static() middleware, serving static files
+// (like HTML, CSS, or JS) from specified directory (here, "public")
+app.use(express.static(path.join(__dirname, "public")));
 
 // 1. GET / with explicit route handler
 app.get("/", (req, res) => {
@@ -63,4 +70,14 @@ app.post("/login", (req, res) => {
   } else {
     return res.json({ succes: true, message: "Congrats, you're in!" });
   }
+});
+
+// 5. GET /my-account
+app.get("/my-account", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "my-account.html"));
+});
+
+// 6. GET /error
+app.get("/error", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "error.html"));
 });
